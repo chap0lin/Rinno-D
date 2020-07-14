@@ -9,6 +9,7 @@ export default class Sprite extends Component{
             height: h,
             X: posX,
             Y: posY,
+            angle: 0,
             tileCount,
             currentTile: 0,
             timeFrame,
@@ -22,19 +23,27 @@ export default class Sprite extends Component{
         console.log('Natural:' + img.naturalWidth)
         this.setState({img})
     }
-    update(posX, posY){
+    update(posX, posY, angle){
         const {tileCount, timeStarted, timeFrame} = this.state
+        var currentTile = 0
         if(tileCount!=1){
             const now = new Date().getTime()
-            var currentTile = Math.floor((now - timeStarted)/timeFrame)%tileCount
+            currentTile = Math.floor((now - timeStarted)/timeFrame)%tileCount
             //console.log('Tile:' + currentTile)
         }
-        this.setState({X: posX, Y: posY, currentTile})
+        this.setState({X: posX, Y: posY, currentTile, angle})
     }
     render(ctx){
-        const {img, width, height, X, Y, currentTile, tileCount} = this.state
+        const {img, width, height, X, Y, currentTile, tileCount, angle} = this.state
         var size = img.naturalWidth/tileCount
-        //console.log('crop:' + currentTile*size)
-        ctx.drawImage(img, currentTile*size, 0, size, img.naturalHeight,  X, Y, width, height)
+        const offsetX = X+width/2
+        const offsetY = Y+height/2
+        console.log(`img - ${currentTile*size}, ${0}, ${size}, ${img.naturalHeight}, ${X-offsetX}, ${Y-offsetY}, ${width}, ${height}`)
+        ctx.translate(offsetX, offsetY)
+        ctx.rotate(angle*Math.PI/180)
+        ctx.drawImage(img, currentTile*size, 0, size, img.naturalHeight,  X-offsetX, Y-offsetY, width, height)
+        ctx.rotate(-angle*Math.PI/180)
+        ctx.translate(-offsetX, -offsetY)
+
     }
 }

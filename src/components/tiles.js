@@ -7,7 +7,9 @@ export default class Tiles extends Component{
             map,
             width: w,
             height: h,
-            nRow
+            nRow,
+            x:0,
+            y:0
         }
         this.loadAssets(src)
     }
@@ -17,15 +19,15 @@ export default class Tiles extends Component{
         img.src=source;
         this.setState({img})
     }
-    update(){
-
+    update(x, y){
+        this.setState({x, y})
     }
     render(ctx){
-        const {img, map, width, height, nRow} = this.state
+        const {img, map, width, height, nRow, x, y} = this.state
         if(!!img){
             for(let i=0;i<map.length; i++){
                 for(let j=0;j<map[i].length; j++){
-                    ctx.drawImage(img, 50*(map[i][j]%8), 50*Math.floor(map[i][j]/8), width, width, j*width, i*width, width, width)
+                    ctx.drawImage(img, 50*(map[i][j]%8), 50*Math.floor(map[i][j]/8), 50, 50, j*width-x, i*width-y, width, width)
                 }
             }
         }

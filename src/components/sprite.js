@@ -38,7 +38,7 @@ export default class Sprite extends Component{
         var size = img.naturalWidth/tileCount
         const offsetX = X+width/2
         const offsetY = Y+height/2
-        console.log(`img - ${currentTile*size}, ${0}, ${size}, ${img.naturalHeight}, ${X-offsetX}, ${Y-offsetY}, ${width}, ${height}`)
+        //console.log(`img - ${currentTile*size}, ${0}, ${size}, ${img.naturalHeight}, ${X-offsetX}, ${Y-offsetY}, ${width}, ${height}`)
         ctx.translate(offsetX, offsetY)
         ctx.rotate(angle*Math.PI/180)
         ctx.drawImage(img, currentTile*size, 0, size, img.naturalHeight,  X-offsetX, Y-offsetY, width, height)

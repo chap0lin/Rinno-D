@@ -2,12 +2,12 @@ import Component from './Component.js'
 import Sprite from './sprite.js'
 
 export default class Player extends Component{
-    constructor(){
+    constructor(size){
         super()
         this.state={
             rotation: 0,
-            walkingSprite: new Sprite('./src/assets/img/WalkingUp.png', 40,40, 630, 350, 4, 200),
-            standingSprite: new Sprite('./src/assets/img/top.png', 40, 40, 630, 350),
+            walkingSprite: new Sprite('./src/assets/img/WalkingUp.png', size, size, 630, 350, 4, 200),
+            standingSprite: new Sprite('./src/assets/img/top.png', size, size, 630, 350),
             still: true
         }
         this.sprite = this.state.standingSprite
@@ -24,7 +24,7 @@ export default class Player extends Component{
             if(!!walkingSprite)walkingSprite.update(630, 350, rotate)
             this.sprite = walkingSprite
         }*/
-        if(!!this.sprite)this.sprite.update(630, 350, rotate)
+        if(!!this.sprite)this.sprite.update(620, 340, rotate)
         this.setState({rotation:rotate, still})
     }
     render(ctx){

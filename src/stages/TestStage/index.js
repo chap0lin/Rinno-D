@@ -11,11 +11,14 @@ export default class TestStage extends Component{
         super()
         this.state = {
             positionX: 0,
+            map: [],
             tiles: null,
             xv:0,
             yv:0,
             x:50,
-            y:1920
+            y:1920,
+            playerSize: 40,
+            tileSize: 60
         }
         var inputHandler = new InputHandler()
         inputHandler.subscribe('keyDown',(key)=>this.moveCamera('down', key))
@@ -23,6 +26,7 @@ export default class TestStage extends Component{
         this.load()
     }
     load(){
+        const {playerSize, tileSize} = this.state
         const map = [
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
@@ -70,10 +74,10 @@ export default class TestStage extends Component{
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
         ]
-        var tiles = new Tiles('./src/assets/img/tilesLab2.png', map, 60,60, 8)
-        var player = new Player()
+        var tiles = new Tiles('./src/assets/img/tilesLab2.png', map, tileSize,tileSize, 8)
+        var player = new Player(playerSize)
         var blackBox = new BlackBox(38*60)
-        this.setState({tiles, player, blackBox})
+        this.setState({tiles, map, player, blackBox})
     }
     moveCamera(evt, key){
         var {xv, yv} = this.state
@@ -93,10 +97,89 @@ export default class TestStage extends Component{
         }
         this.setState({xv, yv})
     }
+    findTile(x, y){
+        const {playerSize, tileSize, map} = this.state
+        const mazeX = Math.floor((x)/tileSize)
+        const mazeY = Math.floor((y)/tileSize)
+        const type = map[mazeY][mazeX]
+        //console.log('Tile:' + `mX:${mazeX}, my:${mazeY} - ${type}`)
+        //console.log(type)
+        return(
+            {mazeX, mazeY, type}
+        )
+    }
+    movePlayer(xv, yv){
+        var {x, y, playerSize, tileSize, map} = this.state
+        const mazeX = (x + 640)
+        const mazeY = (y + 360)
+        console.log(`Tx:${mazeX}, Ty:${mazeY} - 11x(${tileSize*11} , ${(map.length - 11)*tileSize})`)
+        if(yv==-1){ //UP
+            if(mazeY%tileSize<=playerSize/2){
+                if((mazeX%tileSize<=playerSize/4 || mazeX%tileSize>=tileSize-playerSize/4) && (mazeY >= tileSize*11) && (mazeY<= (map.length-11)*tileSize) ){
+                    console.log('WallJump1')
+                }else{
+                    const tile = this.findTile(mazeX, mazeY-tileSize).type
+                    if(tile==3 || tile==5 || tile==8 || tile==12 || tile==13 || tile==14 || tile==15 || tile==9){
+                        console.log('NOT PASSSS')
+                    }else{
+                        y += yv*STEP
+                    }
+                }
+            }else{
+                y += yv*STEP
+            }
+        }else if(yv==1){
+            if(mazeY%tileSize>=tileSize-playerSize/2){
+                if((mazeX%tileSize<=playerSize/4 || mazeX%tileSize>=tileSize-playerSize/4) && (mazeY >= tileSize*11) && (mazeY<= (map.length-11)*tileSize)){
+                    console.log('WallJump2')
+                }else{
+                    const tile = this.findTile(mazeX, mazeY+tileSize).type
+                    if(tile==4 || tile==5 || tile==6 || tile==7 || tile==8 || tile==10 || tile==13 || tile==9){
+                        console.log('NOT PASSSS')
+                    }else{
+                        y += yv*STEP
+                    }
+                }
+            }else{
+                y += yv*STEP
+            }
+        }
+        if(xv==1){
+            if(mazeX%tileSize>=tileSize-playerSize/2){
+                if((mazeY%tileSize<=playerSize/4 || mazeY%tileSize>=tileSize-playerSize/4) && (mazeY >= tileSize*11) && (mazeY<= (map.length-11)*tileSize)){
+                    console.log('WallJump3')
+                }else{
+                    const tile = this.findTile(mazeX+tileSize, mazeY).type
+                    if(tile==0 || tile==2 || tile==4 || tile==5 || tile==6 || tile==9 || tile==12 || tile==14){
+                        console.log('NOT PASSSS')
+                    }else{
+                        x += xv*STEP
+                    }
+                }
+            }else{
+                x += xv*STEP
+            }
+        }else if(xv==-1){
+            if(mazeX%tileSize<=playerSize/2){
+                if((mazeY%tileSize<=playerSize/4 || mazeY%tileSize>=tileSize-playerSize/4) && (mazeY >= tileSize*11 && mazeY<= (map.length-11)*tileSize)){
+                    console.log('WallJump4')
+                }else{
+                    const tile = this.findTile(mazeX-tileSize, mazeY).type
+                    if(tile==0 || tile==4 || tile==7 || tile==9 || tile==11 || tile==12 || tile==13 || tile==15){
+                        console.log('NOT PASSSS')
+                    }else{
+                        x += xv*STEP
+                    }
+                }
+            }else{
+                x += xv*STEP
+            }
+        }
+        return([ x, y ])
+    }
     update(){
-        var {player, tiles, blackBox, x, xv, y, yv} = this.state
-        x+=xv*STEP
-        y+=yv*STEP
+        var {player, tiles, blackBox, x, xv, y, yv} = this.state;
+        [x, y] = this.movePlayer(xv, yv)
         //console.log(`X:${x}, Y:${y}`)
         if(!!tiles)tiles.update(x, y)
         blackBox.update(1, y)

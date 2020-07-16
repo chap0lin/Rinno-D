@@ -33,7 +33,7 @@ export default class InputHandler extends Component{
         functionList.forEach(callFunction => callFunction(command))
     }
     handleKeydown(evt){
-        console.log(`Key down event with key: ${evt.key}`)
+        //console.log(`Key down event with key: ${evt.key}`)
         this.notifyAll("keyDown", evt.key)
     }
     handleKeyUp(evt){

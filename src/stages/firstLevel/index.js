@@ -3,6 +3,7 @@ import InputHandler from '../../inputHandler.js'
 import Tiles from '../../components/tiles.js'
 import Player from '../../components/player.js'
 import BlackBox from '../../components/blackBox.js'
+import Thunder from '../../components/thunder.js'
 
 const STEP = 5
 
@@ -15,10 +16,11 @@ export default class FistLevel extends Component{
             tiles: null,
             xv:0,
             yv:0,
-            x:0,
+            x:60,
             y:0,
             playerSize: 40,
-            tileSize: 60
+            tileSize: 60,
+            thunder: null
         }
         var inputHandler = new InputHandler()
         inputHandler.subscribe('keyDown',(key)=>this.moveCamera('down', key))
@@ -94,8 +96,16 @@ export default class FistLevel extends Component{
             case 'ArrowDown':
                 yv=evt=='down'?1:0
                 break
+            case 't':
+                this.createThunder()
+                break
         }
         this.setState({xv, yv})
+    }
+    createThunder(){
+        const { blackBox } = this.state
+        const thunder = new Thunder(100, blackBox)
+        this.setState({thunder})
     }
     findTile(x, y){
         const {playerSize, tileSize, map} = this.state
@@ -178,21 +188,28 @@ export default class FistLevel extends Component{
         return([ x, y ])
     }
     update(){
-        var {player, tiles, blackBox, x, xv, y, yv} = this.state;
+        var {player, tiles, blackBox, x, xv, y, yv, thunder} = this.state;
         [x, y] = this.movePlayer(xv, yv)
         //console.log(`X:${x}, Y:${y}`)
         if(!!tiles)tiles.update(x, y)
         blackBox.update(1, y)
         player.update(xv, yv)
-        this.setState({x, y})
+        if(!!thunder && thunder.hasExpired()){
+            thunder = null
+        }else if(!!thunder && !thunder.hasExpired())
+            thunder.update()
+        
+        this.setState({x, y, thunder})
     }
     render(ctx){
-        const {tiles, blackBox, player} = this.state
-        ctx.fillStyle = "white"
+        const {tiles, blackBox, player, thunder} = this.state
+        ctx.fillStyle = "black"
         ctx.fillRect(0,0,1280,720)
+        
         if(!!tiles)tiles.render(ctx)
         if(!!blackBox)blackBox.render(ctx)
         if(!!player)player.render(ctx)
+        if(!!thunder)thunder.render(ctx)
         // ctx.fillStyle="blue"
         // ctx.fillRect(this.state.positionX,0,10,10)
     }

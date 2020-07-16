@@ -9,6 +9,9 @@ export default class BlackBox extends Component{
             max: height
         }
     }
+    highlight(){
+        this.setState({alpha: 0})
+    }
     update(lantern, yLevel){
         var {alpha} = this.state
         alpha = yLevel>1680?yLevel>1950?0:(1-(yLevel-1680)/270):yLevel>=0?yLevel>270?1:(yLevel)/270:0

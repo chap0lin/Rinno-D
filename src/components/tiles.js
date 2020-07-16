@@ -14,9 +14,9 @@ export default class Tiles extends Component{
         this.loadAssets(src)
     }
     loadAssets(source){
-        var img = new Image();
+        var img = new Image()
         console.log(source)
-        img.src=source;
+        img.src=source
         this.setState({img})
     }
     update(x, y){

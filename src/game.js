@@ -1,5 +1,6 @@
 import Component from './components/Component.js'
 import TestStage from './stages/TestStage/index.js'
+import FirstLevel from './stages/firstLevel/index.js'
 
 export default class Game extends Component{
     constructor(canv){
@@ -8,7 +9,7 @@ export default class Game extends Component{
             
         }
         this.canv = canv
-        this.stage = new TestStage()
+        this.stage = new FirstLevel()
     }
     update(){
         this.stage.update()

@@ -1,20 +1,28 @@
 import Component from './Component.js'
 
 export default class BlackBox extends Component{
-    constructor(height){
+    constructor(mapLenght, tileSize, margin, cameraOffset){
         super()
         this.state = {
             alpha: 1,
             lanternSize: 120,
-            max: height
+            min: (mapLenght-margin)*tileSize - cameraOffset,
+            max: (mapLenght-margin+5)*tileSize -cameraOffset,
+            hightlightTimer: null
         }
     }
     highlight(){
-        this.setState({alpha: 0})
+        var {hightlightTimer} = this.state
+        hightlightTimer = new Date().getTime()
+        this.setState({alpha: 0, hightlightTimer})
     }
     update(lantern, yLevel){
-        var {alpha} = this.state
-        alpha = yLevel>1680?yLevel>1950?0:(1-(yLevel-1680)/270):yLevel>=0?yLevel>270?1:(yLevel)/270:0
+        var {alpha, max, min, hightlightTimer} = this.state
+        //console.log('Ylevel:' + yLevel + `min:${min}, max:${max}`)
+        const now = new Date().getTime()
+        if(now-hightlightTimer>100){
+            alpha = yLevel>min?yLevel>max?0:(1-(yLevel-min)/300):yLevel>=0?yLevel>300?1:(yLevel)/300:0
+        }
         this.setState({alpha})
     }
     render(ctx){

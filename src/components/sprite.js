@@ -20,7 +20,7 @@ export default class Sprite extends Component{
     loadAssets(src){
         var img = new Image()
         img.src=src
-        console.log('Natural:' + img.naturalWidth)
+        //console.log('Natural:' + img.naturalWidth)
         this.setState({img})
     }
     update(posX, posY, angle){

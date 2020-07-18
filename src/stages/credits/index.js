@@ -34,12 +34,14 @@ export default class Credits extends Component{
         
         ctx.fillStyle = "white"
         ctx.font = "40px Calibri"
-        ctx.fillText('Desenvolvimento:', 200, 200)
-        ctx.fillText('Colaboradores:', 200, 350)
+        ctx.fillText('Desenvolvimento:', 200, 150)
+        ctx.fillText('Colaboradores:', 200, 300)
+        ctx.fillText('Música:', 200, 510)
         ctx.font = "60px Calibri"
-        ctx.fillText('Carlos Rocha', 200, 270)
-        ctx.fillText('Alexander Paschoaletto', 200, 420)
-        ctx.fillText('Rodrigo Lima', 200, 480)
+        ctx.fillText('Carlos Rocha', 200, 220)
+        ctx.fillText('Alexander Paschoaletto', 200, 370)
+        ctx.fillText('Rodrigo Lima', 200, 430)
+        ctx.fillText('Arthur Martins', 200, 580)
 
         if(!!shadow)shadow.render(ctx)
 

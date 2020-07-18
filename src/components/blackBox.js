@@ -20,7 +20,7 @@ export default class BlackBox extends Component{
         var {alpha, max, min, hightlightTimer} = this.state
         //console.log('Ylevel:' + yLevel + `min:${min}, max:${max}`)
         const now = new Date().getTime()
-        if(now-hightlightTimer>100){
+        if(now-hightlightTimer>300){
             alpha = yLevel>min?yLevel>max?0:(1-(yLevel-min)/300):yLevel>=0?yLevel>300?1:(yLevel)/300:0
         }
         this.setState({alpha})

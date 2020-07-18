@@ -5,12 +5,14 @@ import Player from '../../components/player.js'
 import BlackBox from '../../components/blackBox.js'
 import Thunder from '../../components/thunder.js'
 import Sound from '../../components/sound.js'
+import Sprite from '../../components/sprite.js'
 
 const STEP = 5
 
 export default class FistLevel extends Component{
-    constructor(){
+    constructor(gameCallback){
         super()
+        this.active = true
         const thunderTimer = new Date().getTime()
         this.state = {
             positionX: 0,
@@ -24,6 +26,10 @@ export default class FistLevel extends Component{
             tileSize: 60,
             thunder: null,
             thunderTimer,
+            prologue: true,
+            epilogue: false,
+            gameCallback,
+            backgroundImage: new Sprite('./src/assets/img/boss1.png', 1280, 720, 0, 0)
         }
         var inputHandler = new InputHandler()
         inputHandler.subscribe('keyDown',(key)=>this.moveCamera('down', key))
@@ -32,53 +38,6 @@ export default class FistLevel extends Component{
     }
     load(){
         const {playerSize, tileSize} = this.state
-        /*const map = [
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 8, 13, 6, 8, 8, 8, 7, 4, 4, 4, 2, 8, 7, 6, 7, 6, 8, 8, 10, 8, 8, 7, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 6, 8, 3, 8, 8, 7, 0, 14, 3, 11, 2, 7, 0, 0, 12, 0, 6, 7, 14, 13, 4, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 0, 5, 8, 8, 8, 15, 14, 8, 8, 15, 0, 12, 14, 3, 8, 15, 0, 14, 8, 8, 15, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 0, 5, 8, 8, 8, 8, 8, 7, 6, 13, 2, 8, 8, 8, 8, 7, 0, 6, 10, 8, 8, 15, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 0, 6, 7, 6, 7, 6, 7, 14, 1, 8, 15, 6, 8, 8, 7, 0, 0, 0, 0, 6, 8, 7, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 0, 12, 2, 15, 14, 15, 14, 7, 14, 8, 8, 15, 5, 7, 0, 0, 0, 0, 0, 0, 6, 15, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 2, 15, 6, 11, 4, 6, 8, 13, 14, 8, 8, 7, 6, 10, 11, 12, 0, 0, 12, 0, 0, 14, 7, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 14, 8, 15, 14, 15, 14, 8, 8, 8, 8, 7, 0, 0, 0, 14, 7, 0, 2, 7, 0, 0, 6, 15, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 8, 8, 8, 10, 8, 8, 8, 10, 7, 0, 0, 0, 2, 13, 0, 0, 0, 0, 0, 0, 0, 4, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 6, 8, 8, 3, 8, 8, 7, 0, 12, 0, 14, 15, 0, 6, 15, 0, 12, 0, 0, 0, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 0, 6, 8, 8, 8, 7, 0, 0, 6, 3, 8, 8, 15, 14, 8, 3, 8, 11, 0, 12, 14, 11, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 12, 14, 7, 6, 7, 0, 0, 0, 0, 5, 8, 8, 8, 8, 10, 8, 7, 12, 0, 6, 8, 15, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 14, 7, 6, 15, 0, 12, 0, 0, 0, 2, 8, 7, 6, 8, 13, 14, 7, 14, 7, 0, 14, 7, 4, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 4, 0, 14, 7, 14, 7, 0, 0, 0, 0, 4, 0, 14, 8, 8, 7, 14, 7, 12, 14, 8, 15, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 14, 8, 3, 13, 0, 0, 0, 0, 14, 15, 0, 6, 10, 7, 14, 7, 14, 8, 8, 7, 6, 11, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 2, 8, 8, 8, 7, 0, 0, 0, 14, 8, 8, 15, 0, 0, 14, 8, 15, 6, 7, 4, 0, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 6, 8, 7, 0, 0, 0, 0, 6, 8, 7, 4, 0, 0, 6, 8, 8, 15, 14, 15, 0, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 0, 6, 15, 0, 0, 0, 12, 14, 13, 0, 0, 0, 14, 15, 6, 8, 8, 8, 8, 15, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 0, 0, 4, 14, 3, 15, 5, 8, 8, 11, 2, 11, 6, 8, 3, 7, 6, 8, 7, 5, 15, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 0, 0, 14, 7, 6, 8, 8, 8, 8, 15, 12, 0, 0, 5, 8, 11, 14, 7, 0, 6, 8, 11, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 0, 14, 8, 15, 14, 8, 8, 8, 7, 6, 8, 15, 0, 5, 8, 3, 8, 15, 0, 0, 6, 15, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 2, 3, 8, 8, 10, 8, 7, 6, 13, 0, 0, 5, 8, 3, 8, 8, 8, 8, 13, 0, 12, 14, 7, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 5, 8, 8, 3, 13, 14, 3, 8, 3, 3, 8, 8, 8, 8, 8, 8, 8, 8, 3, 8, 8, 15, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-        ]*/
         const map = [
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
@@ -86,11 +45,11 @@ export default class FistLevel extends Component{
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 8, 7, 6, 7, 6, 8, 8, 8, 3, 8, 7, 5, 10, 8, 7, 6, 8, 8, 7, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 14, 7, 0, 0, 14, 3, 8, 7, 6, 8, 7, 14, 7, 14, 13, 14, 15, 6, 8, 15, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 5, 11, 0, 0, 6, 7, 5, 11, 14, 7, 0, 4, 14, 8, 10, 8, 7, 0, 6, 13, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
@@ -111,7 +70,7 @@ export default class FistLevel extends Component{
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 4, 0, 5, 7, 0, 0, 12, 6, 7, 2, 7, 5, 11, 0, 2, 8, 11, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 2, 11, 6, 3, 15, 14, 7, 0, 0, 12, 0, 6, 15, 0, 0, 6, 15, 0, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 14, 15, 14, 3, 8, 8, 13, 14, 15, 14, 7, 14, 15, 5, 15, 12, 14, 8, 15, 12, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+            [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
             [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
@@ -130,29 +89,67 @@ export default class FistLevel extends Component{
         music.play()
         this.setState({tiles, map, player, blackBox, music})
     }
+    prologue(ctx){
+        ctx.fillStyle = "rgba(0,0,0,0.8)"
+        ctx.fillRect(0,0,1280,720)
+        ctx.fillStyle = "white"
+        ctx.font = "30px Calibri"
+        ctx.fillText('Rinno D. você ousou entrar na pirâmide minha e dos meus irmãos para tentar pegar nossa', 60, 90)
+        ctx.fillText('espaçonave e fugir da quarentena!', 60, 130)
+        ctx.fillText('Fechei o caminho que você entrou e agora eu vou te derrotar por que o seu sacrifício', 60, 180)
+        ctx.fillText('vai me permitir chegar a niveis mais altos da pirâmide.', 60, 220)
+        ctx.fillText('Como todos sabemos, as pirâmides só poderiam ser constuídas por nós aliens e a única', 60, 270)
+        ctx.fillText('forma de escapar delas é não entrando ou chegando na posição mais alta.', 60, 310)
+        ctx.fillStyle = "white"
+        ctx.font = "30px Calibri"
+        ctx.fillText('Pressione qualquer tecla para começar!', 580, 640)
+    }
+    epilogue(ctx){
+        ctx.fillStyle = "rgba(0,0,0,0.8)"
+        ctx.fillRect(0,0,1280,720)
+        ctx.fillStyle = "white"
+        ctx.font = "30px Calibri"
+        ctx.fillText('Oh não, você me derrotou! Como recompensa você liberou o poder do raio!', 60, 90)
+        ctx.fillText('Pressione', 60, 180) 
+        ctx.fillText('no próximo labirinto para usar o poder do raio!', 60, 340)
+        ctx.fillText('Pressione qualquer tecla para continuar!', 580, 640)
+        ctx.font = "60px Calibri"
+        ctx.fillText('F', 60, 270) 
+    }
     moveCamera(evt, key){
-        var {xv, yv} = this.state
-        switch(key){
-            case 'ArrowRight':
-                xv=evt=='down'?1:0
-                break
-            case 'ArrowLeft':
-                xv=evt=='down'?-1:0
-                break
-            case 'ArrowUp':
-                yv=evt=='down'?-1:0
-                break
-            case 'ArrowDown':
-                yv=evt=='down'?1:0
-                break
-            case 't':
-                evt=='down'&&this.createThunder()
-                break
-            case 'm':
-                evt=='down'&&this.state.music.stop()
-                break
+        var {xv, yv, prologue, epilogue} = this.state
+        if(this.active && epilogue && evt=='down'){
+            this.state.gameCallback({
+                currentStage: 'FistLevel',
+                nextStage: 'SecondLevel'
+            })
+            this.active = false
         }
-        this.setState({xv, yv})
+        if(prologue && evt=='down'){
+            prologue = false
+        }else{
+            switch(key){
+                case 'ArrowRight':
+                    xv=evt=='down'?1:0
+                    break
+                case 'ArrowLeft':
+                    xv=evt=='down'?-1:0
+                    break
+                case 'ArrowUp':
+                    yv=evt=='down'?-1:0
+                    break
+                case 'ArrowDown':
+                    yv=evt=='down'?1:0
+                    break
+                case 't':
+                    evt=='down'&&this.createThunder()
+                    break
+                case 'm':
+                    evt=='down'&&this.state.music.stop()
+                    break
+            }
+        }
+        this.setState({xv, yv, prologue})
     }
     createThunder(){
         var { blackBox, map, x, y, tileSize } = this.state
@@ -191,11 +188,11 @@ export default class FistLevel extends Component{
         if(yv==-1){ //UP
             if(mazeY%tileSize<=playerSize/2){
                 if((mazeX%tileSize<=playerSize/4 || mazeX%tileSize>=tileSize-playerSize/4) && (mazeY >= tileSize*11) && (mazeY<= (map.length-11)*tileSize) ){
-                    console.log('WallJump1')
+                    //console.log('WallJump1')
                 }else{
                     const tile = this.findTile(mazeX, mazeY-tileSize).type
                     if(tile==3 || tile==5 || tile==8 || tile==12 || tile==13 || tile==14 || tile==15 || tile==9){
-                        console.log('NOT PASSSS')
+                        //console.log('NOT PASSSS')
                     }else{
                         y += yv*STEP
                     }
@@ -206,11 +203,11 @@ export default class FistLevel extends Component{
         }else if(yv==1){
             if(mazeY%tileSize>=tileSize-playerSize/2){
                 if((mazeX%tileSize<=playerSize/4 || mazeX%tileSize>=tileSize-playerSize/4) && (mazeY >= tileSize*11) && (mazeY<= (map.length-11)*tileSize)){
-                    console.log('WallJump2')
+                    //console.log('WallJump2')
                 }else{
                     const tile = this.findTile(mazeX, mazeY+tileSize).type
                     if(tile==4 || tile==5 || tile==6 || tile==7 || tile==8 || tile==10 || tile==13 || tile==9){
-                        console.log('NOT PASSSS')
+                        //console.log('NOT PASSSS')
                     }else{
                         y += yv*STEP
                     }
@@ -222,11 +219,11 @@ export default class FistLevel extends Component{
         if(xv==1){
             if(mazeX%tileSize>=tileSize-playerSize/2){
                 if((mazeY%tileSize<=playerSize/4 || mazeY%tileSize>=tileSize-playerSize/4) && (mazeY >= tileSize*11) && (mazeY<= (map.length-11)*tileSize)){
-                    console.log('WallJump3')
+                    //console.log('WallJump3')
                 }else{
                     const tile = this.findTile(mazeX+tileSize, mazeY).type
                     if(tile==0 || tile==2 || tile==4 || tile==5 || tile==6 || tile==9 || tile==12 || tile==14){
-                        console.log('NOT PASSSS')
+                        //console.log('NOT PASSSS')
                     }else{
                         x += xv*STEP
                     }
@@ -237,11 +234,11 @@ export default class FistLevel extends Component{
         }else if(xv==-1){
             if(mazeX%tileSize<=playerSize/2){
                 if((mazeY%tileSize<=playerSize/4 || mazeY%tileSize>=tileSize-playerSize/4) && (mazeY >= tileSize*11 && mazeY<= (map.length-11)*tileSize)){
-                    console.log('WallJump4')
+                    //console.log('WallJump4')
                 }else{
                     const tile = this.findTile(mazeX-tileSize, mazeY).type
                     if(tile==0 || tile==4 || tile==7 || tile==9 || tile==11 || tile==12 || tile==13 || tile==15){
-                        console.log('NOT PASSSS')
+                        //console.log('NOT PASSSS')
                     }else{
                         x += xv*STEP
                     }
@@ -255,10 +252,14 @@ export default class FistLevel extends Component{
     update(){
         var {player, tiles, blackBox, x, xv, y, yv, thunder, thunderTimer} = this.state;
         var now  = new Date().getTime()
+        if(x>=560 && x<= 620 && y>=0 && y<=60){
+            this.setState({epilogue:true})
+            return
+        }
         //console.log(`now:${now-thunderTimer}`)
-        if(now-thunderTimer > 2000){
+        if(now-thunderTimer > 2000 && y>270 && y<1500){
             thunderTimer = now
-            console.log('new thunder')
+            //console.log('new thunder')
             thunder = this.createThunder()
         }
         var playerHitted = false
@@ -283,14 +284,22 @@ export default class FistLevel extends Component{
         this.setState({x, y, thunder, thunderTimer})
     }
     render(ctx){
-        const {tiles, blackBox, player, thunder} = this.state
-        ctx.fillStyle = "black"
-        ctx.fillRect(0,0,1280,720)
+        const {prologue,epilogue, tiles, blackBox, player, thunder, backgroundImage} = this.state
+        if(epilogue){
+            if(!!backgroundImage)backgroundImage.render(ctx)
+            this.epilogue(ctx)
+        }else if(prologue){
+            if(!!backgroundImage)backgroundImage.render(ctx)
+            this.prologue(ctx)
+
+        }else{
+            if(!!tiles)tiles.render(ctx)
+            if(!!blackBox)blackBox.render(ctx)
+            if(!!player)player.render(ctx)
+            if(!!thunder)thunder.render(ctx)
+        }
         
-        if(!!tiles)tiles.render(ctx)
-        if(!!blackBox)blackBox.render(ctx)
-        if(!!player)player.render(ctx)
-        if(!!thunder)thunder.render(ctx)
+    
         // ctx.fillStyle="blue"
         // ctx.fillRect(this.state.positionX,0,10,10)
     }

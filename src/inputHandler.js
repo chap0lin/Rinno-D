@@ -9,12 +9,16 @@ export default class InputHandler extends Component{
         this.state = {
             observers: {
                 "keyDown": [],
-                "keyUp": []
+                "keyUp": [],
+                "mouseMove": [],
+                "mouseClick": [],
             },
         }
         
         document.addEventListener('keydown', this.handleKeydown.bind(this))
         document.addEventListener('keyup', this.handleKeyUp.bind(this))
+        document.addEventListener('mousemove', this.handleMouseMove.bind(this))
+        document.addEventListener('mousedown', this.handleMouseDown.bind(this))
     }
     isTopic(topic){
         return !!this.state.observers[topic]
@@ -28,6 +32,15 @@ export default class InputHandler extends Component{
             console.log(`The topic ${topic} does not exist!`)
         }
     }
+    unsubscribe = (topic, functionToRemove) => {
+        if(this.isTopic(topic)){
+            var {observers} = this.state
+            observers[topic].filter(funct => funct!==functionToRemove)
+            this.setState({observers})
+        }else{
+            console.log(`The topic ${topic} does not exist!`)
+        }
+    };
     notifyAll(topic, command){
         const functionList = this.state.observers[topic]
         functionList.forEach(callFunction => callFunction(command))
@@ -38,5 +51,11 @@ export default class InputHandler extends Component{
     }
     handleKeyUp(evt){
         this.notifyAll("keyUp", evt.key)
+    }
+    handleMouseMove(evt){
+        this.notifyAll("mouseMove", evt)
+    }
+    handleMouseDown(evt){
+        this.notifyAll("mouseClick", evt)
     }
 }

@@ -153,7 +153,7 @@ export default class FistLevel extends Component{
     }
     createThunder(){
         var { blackBox, map, x, y, tileSize } = this.state
-        const tileDistance = 3*tileSize
+        const tileDistance = 2*tileSize
         const randomX = x+640-tileDistance + Math.floor(Math.random()*tileDistance*2)
         const randomY = y+360-tileDistance + Math.floor(Math.random()*tileDistance*2)
         const thunder = new Thunder(randomX, randomY, x, y, blackBox)

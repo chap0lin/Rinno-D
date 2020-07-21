@@ -158,15 +158,12 @@ export default class FistLevel extends Component{
         const randomY = y+360-tileDistance + Math.floor(Math.random()*tileDistance*2)
         const thunder = new Thunder(randomX, randomY, x, y, blackBox)
         return thunder
-        //this.setState({thunder})
     }
     findTile(x, y){
-        const {playerSize, tileSize, map} = this.state
+        const {tileSize, map} = this.state
         const mazeX = Math.floor((x)/tileSize)
         const mazeY = Math.floor((y)/tileSize)
         const type = map[mazeY][mazeX]
-        //console.log('Tile:' + `mX:${mazeX}, my:${mazeY} - ${type}`)
-        //console.log(type)
         return(
             {mazeX, mazeY, type}
         )
@@ -175,7 +172,6 @@ export default class FistLevel extends Component{
         var {x, y} = this.state
         const mazeX = (x + 640)
         const mazeY = (y + 360)
-        //console.log(`Tx:${mazeX}, Ty:${mazeY}`)
         y += yv*(STEP*2)
         x += xv*(STEP*2)
         return([ x, y ])
@@ -184,15 +180,12 @@ export default class FistLevel extends Component{
         var {x, y, playerSize, tileSize, map} = this.state
         const mazeX = (x + 640)
         const mazeY = (y + 360)
-        //console.log(`Tx:${mazeX}, Ty:${mazeY} - 11x(${tileSize*11} , ${(map.length - 11)*tileSize})`)
         if(yv==-1){ //UP
             if(mazeY%tileSize<=playerSize/2){
                 if((mazeX%tileSize<=playerSize/4 || mazeX%tileSize>=tileSize-playerSize/4) && (mazeY >= tileSize*11) && (mazeY<= (map.length-11)*tileSize) ){
-                    //console.log('WallJump1')
                 }else{
                     const tile = this.findTile(mazeX, mazeY-tileSize).type
                     if(tile==3 || tile==5 || tile==8 || tile==12 || tile==13 || tile==14 || tile==15 || tile==9){
-                        //console.log('NOT PASSSS')
                     }else{
                         y += yv*STEP
                     }
@@ -203,11 +196,9 @@ export default class FistLevel extends Component{
         }else if(yv==1){
             if(mazeY%tileSize>=tileSize-playerSize/2){
                 if((mazeX%tileSize<=playerSize/4 || mazeX%tileSize>=tileSize-playerSize/4) && (mazeY >= tileSize*11) && (mazeY<= (map.length-11)*tileSize)){
-                    //console.log('WallJump2')
                 }else{
                     const tile = this.findTile(mazeX, mazeY+tileSize).type
                     if(tile==4 || tile==5 || tile==6 || tile==7 || tile==8 || tile==10 || tile==13 || tile==9){
-                        //console.log('NOT PASSSS')
                     }else{
                         y += yv*STEP
                     }
@@ -219,11 +210,9 @@ export default class FistLevel extends Component{
         if(xv==1){
             if(mazeX%tileSize>=tileSize-playerSize/2){
                 if((mazeY%tileSize<=playerSize/4 || mazeY%tileSize>=tileSize-playerSize/4) && (mazeY >= tileSize*11) && (mazeY<= (map.length-11)*tileSize)){
-                    //console.log('WallJump3')
                 }else{
                     const tile = this.findTile(mazeX+tileSize, mazeY).type
                     if(tile==0 || tile==2 || tile==4 || tile==5 || tile==6 || tile==9 || tile==12 || tile==14){
-                        //console.log('NOT PASSSS')
                     }else{
                         x += xv*STEP
                     }
@@ -234,11 +223,9 @@ export default class FistLevel extends Component{
         }else if(xv==-1){
             if(mazeX%tileSize<=playerSize/2){
                 if((mazeY%tileSize<=playerSize/4 || mazeY%tileSize>=tileSize-playerSize/4) && (mazeY >= tileSize*11 && mazeY<= (map.length-11)*tileSize)){
-                    //console.log('WallJump4')
                 }else{
                     const tile = this.findTile(mazeX-tileSize, mazeY).type
                     if(tile==0 || tile==4 || tile==7 || tile==9 || tile==11 || tile==12 || tile==13 || tile==15){
-                        //console.log('NOT PASSSS')
                     }else{
                         x += xv*STEP
                     }
@@ -256,10 +243,8 @@ export default class FistLevel extends Component{
             this.setState({epilogue:true})
             return
         }
-        //console.log(`now:${now-thunderTimer}`)
         if(now-thunderTimer > 2000 && y>270 && y<1500){
             thunderTimer = now
-            //console.log('new thunder')
             thunder = this.createThunder()
         }
         var playerHitted = false
@@ -274,7 +259,6 @@ export default class FistLevel extends Component{
         }else{
             [x, y] = this.movePlayer(xv, yv)
         }
-        //console.log(`X:${x}, Y:${y}`)
         if(!!tiles)tiles.update(x, y)
 
         blackBox.update(1, y)
@@ -298,9 +282,5 @@ export default class FistLevel extends Component{
             if(!!player)player.render(ctx)
             if(!!thunder)thunder.render(ctx)
         }
-        
-    
-        // ctx.fillStyle="blue"
-        // ctx.fillRect(this.state.positionX,0,10,10)
     }
 }

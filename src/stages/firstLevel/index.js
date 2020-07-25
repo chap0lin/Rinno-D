@@ -98,7 +98,7 @@ export default class FistLevel extends Component{
         ctx.fillText('espaçonave e fugir da quarentena!', 60, 130)
         ctx.fillText('Fechei o caminho que você entrou e agora eu vou te derrotar por que o seu sacrifício', 60, 180)
         ctx.fillText('vai me permitir chegar a niveis mais altos da pirâmide.', 60, 220)
-        ctx.fillText('Como todos sabemos, as pirâmides só poderiam ser constuídas por nós aliens e a única', 60, 270)
+        ctx.fillText('Como todos sabemos, as pirâmides só poderiam ser construídas por nós aliens e a única', 60, 270)
         ctx.fillText('forma de escapar delas é não entrando ou chegando na posição mais alta.', 60, 310)
         ctx.fillStyle = "white"
         ctx.font = "30px Calibri"

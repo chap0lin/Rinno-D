@@ -10,11 +10,12 @@ export default class Credits extends Component{
         super()
         this.active = true
         const inputHandler = new InputHandler()
-        inputHandler.subscribe('mouseClick',(param)=>this.mouseClick(param))
+        inputHandler.subscribe('mouseClick','CreditsClick',(param)=>this.mouseClick(param))
         this.state = {
             background: new Sprite('./src/assets/img/capa.png', 1280, 720, 0, 0),
             shadow: new ShadowMenu(0.9),
             gameCallback,
+            inputHandler,
         }
     }
     mouseClick(mouseObject){
@@ -45,5 +46,9 @@ export default class Credits extends Component{
 
         if(!!shadow)shadow.render(ctx)
 
+    }
+    unload(){
+        this.state.inputHandler.unsubscribe('mouseMove', 'ShadowMenuMove')
+        this.state.inputHandler.unsubscribe('mouseClick','CreditsClick')
     }
 }

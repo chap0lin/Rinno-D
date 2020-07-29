@@ -196,4 +196,7 @@ export default class TestStage extends Component{
         // ctx.fillStyle="blue"
         // ctx.fillRect(this.state.positionX,0,10,10)
     }
+    unload(){
+        
+    }
 }

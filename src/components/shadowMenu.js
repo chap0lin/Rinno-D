@@ -10,7 +10,7 @@ export default class ShadowMenu extends Component{
             alpha
         }
         const inputHandler = new InputHandler()
-        inputHandler.subscribe('mouseMove',(param)=>this.moveFocus(param))
+        inputHandler.subscribe('mouseMove', 'ShadowMenuMove',(param)=>this.moveFocus(param))
     }
     moveFocus(mouseObject){
         const x = mouseObject.offsetX

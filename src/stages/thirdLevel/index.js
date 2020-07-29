@@ -12,7 +12,9 @@ export default class ThirdLevel extends Component{
     constructor(gameCallback){
         super()
         this.active = true
+        var inputHandler = new InputHandler()
         this.state = {
+            inputHandler,
             backgroundImage: new Sprite('./src/assets/img/boss3.png', 1280, 720, 0, 0),
             positionX: 0,
             map: [],
@@ -29,9 +31,8 @@ export default class ThirdLevel extends Component{
             prologue:true,
             epilogue:false,
         }
-        var inputHandler = new InputHandler()
-        inputHandler.subscribe('keyDown',(key)=>this.moveCamera('down', key))
-        inputHandler.subscribe('keyUp', (key)=>this.moveCamera('up', key))
+        inputHandler.subscribe('keyDown','ThirdLevelDown',(key)=>this.moveCamera('down', key))
+        inputHandler.subscribe('keyUp','ThirdLevelUp', (key)=>this.moveCamera('up', key))
         this.load()
     }
     load(){
@@ -106,6 +107,7 @@ export default class ThirdLevel extends Component{
         ctx.fillText('Pressione qualquer tecla para continuar!', 580, 640)
     }
     moveCamera(evt, key){
+        //console.log('Fase 3 Movement')
         var {xv, yv, prologue, epilogue} = this.state
         if(this.active && epilogue && evt=='down'){
             this.state.gameCallback({
@@ -298,5 +300,10 @@ export default class ThirdLevel extends Component{
                 ctx.fillText(`${textTimer}`, 60, 90)
             }
         }
+    }
+    unload(){
+        //console.log('Unsubscribing Stage 3')
+        this.state.inputHandler.unsubscribe('keyDown','ThirdLevelDown')
+        this.state.inputHandler.unsubscribe('keyUp','ThirdLevelUp')
     }
 }

@@ -15,6 +15,7 @@ export default class Game extends Component{
         this.stage = new MainMenu(this.changeState.bind(this))
     }
     changeState(obj){
+        this.stage.unload()
         //console.log('Changing Level:' + `${obj.nextStage}`)
         switch(obj.nextStage){
             case 'FirstLevel':

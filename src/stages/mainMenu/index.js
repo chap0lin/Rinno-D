@@ -8,7 +8,7 @@ export default class MainMenu extends Component{
         super()
         this.active = true
         const inputHandler = new InputHandler()
-        inputHandler.subscribe('mouseClick',(param)=>this.mouseClick(param))
+        inputHandler.subscribe('mouseClick','MainMenuClick',(param)=>this.mouseClick(param))
         this.state = {
             background: new Sprite('./src/assets/img/capa.png', 1280, 720, 0, 0),
             shadow: new ShadowMenu(0.8),
@@ -18,7 +18,6 @@ export default class MainMenu extends Component{
         
     }
     mouseClick(mouseObject){
-
         const { offsetX, offsetY} = mouseObject
         //console.log('click' + offsetX+ ',' + offsetY)
         if(this.active && offsetX>=540 && offsetX<=665.8 && offsetY>=480 && offsetY<=540){
@@ -27,13 +26,11 @@ export default class MainMenu extends Component{
                 currentStage: 'MainMenu',
                 nextStage: 'FirstLevel'
             })
-            this.unload()
         }else if(this.active && offsetX>=540 && offsetX<=673.8 && offsetY>=560 && offsetY<=600){
             this.state.gameCallback({
                 currentStage: 'MainMenu',
                 nextStage: 'Credits'
             })
-            this.unload()
         }
     }
     update(){
@@ -53,6 +50,8 @@ export default class MainMenu extends Component{
 
     }
     unload(){
+        this.state.inputHandler.unsubscribe('mouseMove', 'ShadowMenuMove')
+        this.state.inputHandler.unsubscribe('mouseClick','MainMenuClick')
         this.active=false
     }
 }

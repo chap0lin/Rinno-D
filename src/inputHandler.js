@@ -23,10 +23,10 @@ export default class InputHandler extends Component{
     isTopic(topic){
         return !!this.state.observers[topic]
     }
-    subscribe(topic, observerFunction){
+    subscribe(topic, name, observerFunction){
         if(this.isTopic(topic)){
             var {observers} = this.state
-            observers[topic].push(observerFunction)
+            observers[topic].push({name, observerFunction})
             this.setState({observers})
         }else{
             console.log(`The topic ${topic} does not exist!`)
@@ -35,7 +35,7 @@ export default class InputHandler extends Component{
     unsubscribe = (topic, functionToRemove) => {
         if(this.isTopic(topic)){
             var {observers} = this.state
-            observers[topic].filter(funct => funct!==functionToRemove)
+            observers[topic] = observers[topic].filter(funct => funct.name!==functionToRemove)
             this.setState({observers})
         }else{
             console.log(`The topic ${topic} does not exist!`)
@@ -43,7 +43,7 @@ export default class InputHandler extends Component{
     };
     notifyAll(topic, command){
         const functionList = this.state.observers[topic]
-        functionList.forEach(callFunction => callFunction(command))
+        functionList.forEach(observer => observer.observerFunction(command))
     }
     handleKeydown(evt){
         //console.log(`Key down event with key: ${evt.key}`)

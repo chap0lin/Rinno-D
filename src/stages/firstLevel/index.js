@@ -13,8 +13,10 @@ export default class FistLevel extends Component{
     constructor(gameCallback){
         super()
         this.active = true
+        var inputHandler = new InputHandler()
         const thunderTimer = new Date().getTime()
         this.state = {
+            inputHandler,
             positionX: 0,
             map: [],
             tiles: null,
@@ -31,9 +33,8 @@ export default class FistLevel extends Component{
             gameCallback,
             backgroundImage: new Sprite('./src/assets/img/boss1.png', 1280, 720, 0, 0)
         }
-        var inputHandler = new InputHandler()
-        inputHandler.subscribe('keyDown',(key)=>this.moveCamera('down', key))
-        inputHandler.subscribe('keyUp', (key)=>this.moveCamera('up', key))
+        inputHandler.subscribe('keyDown','FirstLevelDown',(key)=>this.moveCamera('down', key))
+        inputHandler.subscribe('keyUp','FirstLevelUp', (key)=>this.moveCamera('up', key))
         this.load()
     }
     load(){
@@ -118,6 +119,7 @@ export default class FistLevel extends Component{
     }
     moveCamera(evt, key){
         var {xv, yv, prologue, epilogue} = this.state
+        //console.log('Fase 1 Movement')
         if(this.active && epilogue && evt=='down'){
             this.state.gameCallback({
                 currentStage: 'FistLevel',
@@ -282,5 +284,10 @@ export default class FistLevel extends Component{
             if(!!player)player.render(ctx)
             if(!!thunder)thunder.render(ctx)
         }
+    }
+    unload(){
+        //console.log('Unsubscribing Stage 1')
+        this.state.inputHandler.unsubscribe('keyDown','FirstLevelDown')
+        this.state.inputHandler.unsubscribe('keyUp','FirstLevelUp')
     }
 }

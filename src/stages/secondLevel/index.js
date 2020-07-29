@@ -11,8 +11,10 @@ const STEP = 5
 export default class SecondLevel extends Component{
     constructor(gameCallback){
         super()
+        var inputHandler = new InputHandler()
         this.active = true
         this.state = {
+            inputHandler,
             backgroundImage: new Sprite('./src/assets/img/boss2.png', 1280, 720, 0, 0),
             positionX: 0,
             map: [],
@@ -29,9 +31,8 @@ export default class SecondLevel extends Component{
             gameCallback,
             textTimer: null
         }
-        var inputHandler = new InputHandler()
-        inputHandler.subscribe('keyDown',(key)=>this.moveCamera('down', key))
-        inputHandler.subscribe('keyUp', (key)=>this.moveCamera('up', key))
+        inputHandler.subscribe('keyDown','SecondLevelDown',(key)=>this.moveCamera('down', key))
+        inputHandler.subscribe('keyUp','SecondLevelUp', (key)=>this.moveCamera('up', key))
         this.load()
     }
     load(){
@@ -107,6 +108,7 @@ export default class SecondLevel extends Component{
         ctx.fillText('ESPAÇO', 60, 270) 
     }
     moveCamera(evt, key){
+        //console.log('Fase 2 Movement')
         var {xv, yv, prologue, epilogue} = this.state
         if(this.active && epilogue && evt=='down'){
             this.state.gameCallback({
@@ -294,5 +296,10 @@ export default class SecondLevel extends Component{
                 ctx.fillText(`${textTimer}`, 60, 90)
             }
         }
+    }
+    unload(){
+        //console.log('Unsubscribing Stage 2')
+        this.state.inputHandler.unsubscribe('keyDown','SecondLevelDown')
+        this.state.inputHandler.unsubscribe('keyUp','SecondLevelUp')
     }
 }
